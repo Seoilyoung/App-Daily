@@ -40,12 +40,14 @@ public class ModifyActivity extends AppCompatActivity{
                 SQLiteDatabase db = helper.getWritableDatabase();
 
                 for(ListItem mitem : mItems){
-                    if(mitem.getFinish() >= 2){
+                    if(mitem.getFinish() == 1){
                         db.execSQL("delete from tb_daily where _id = " + mitem.getUid());
                     }
                 }
                 db.close();
+                adapter.notifyDataSetChanged();
                 setData();
+
             }
         });
         //final CheckBox chk_all = (CheckBox) findViewById(R.id.chk_all);
@@ -70,24 +72,6 @@ public class ModifyActivity extends AppCompatActivity{
         mitemTouchHelper.attachToRecyclerView(recyclerView);
 
         setData();
-
-        recyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    DBHelper helper = new DBHelper(ModifyActivity.this);
-                    SQLiteDatabase db = helper.getWritableDatabase();
-                    Log.i("로그","테스트");
-                    db.execSQL("delete from tb_daily");
-                    for(ListItem mitem : mItems) {
-                        db.execSQL("insert into tb_daily (content, finish) values ('" + mitem.getContent() + "', " + mitem.getFinish()+")");
-                        Log.i("로그",mitem.getUid() + " / " + mitem.getFinish() + " / " + mitem.getContent());
-                    }
-                    db.close();
-                }
-                return false;
-            }
-        });
     }
     private void setData(){
         mItems.clear();
@@ -95,12 +79,11 @@ public class ModifyActivity extends AppCompatActivity{
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from tb_daily order by _id asc",null);
         while(cursor.moveToNext()){
-            mItems.add(new ListItem(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2))));
+            mItems.add(new ListItem(Integer.parseInt(cursor.getString(0)), cursor.getString(1), 0));
         }
         db.close();
         adapter.notifyDataSetChanged();
     }
-
     public void onBackPressed(){
         Intent intent2 = new Intent();
         intent2.putExtra("result", "OK");

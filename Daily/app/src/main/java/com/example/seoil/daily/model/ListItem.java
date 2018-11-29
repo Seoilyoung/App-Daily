@@ -13,7 +13,6 @@ public class ListItem {
     }
 
     public int getUid(){return _id;}
-    public void setUid(int _id){this._id = _id;}
     public String getContent(){
         return content;
     }

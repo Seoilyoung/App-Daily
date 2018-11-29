@@ -30,5 +30,4 @@ public class RItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public RItemTouchHelperCallback(OnItemMoveListener listener){
         mItemMoveListener = listener;
     }
-
 }
