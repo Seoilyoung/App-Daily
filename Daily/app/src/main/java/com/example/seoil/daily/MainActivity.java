@@ -32,12 +32,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     ActivityMainBinding mainBinding;
     private RecylcerAdapter adapter;
     private ArrayList<ListItem> mItems = new ArrayList<>();
+    String str_date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mainBinding.txtDate.setText(new SimpleDateFormat("yyyy년 MM월 dd일 (E)").format(new Date()));
+        str_date = new SimpleDateFormat("yyyy년 MM월 dd일 (E)").format(new Date());
+
+        mainBinding.txtDate.setText(str_date);
         mainBinding.swipeRefreshLayout.setOnRefreshListener(this);
         setRecyclerView();
         mainBinding.fab.setOnClickListener(new View.OnClickListener() {
