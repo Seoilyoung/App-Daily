@@ -111,13 +111,15 @@ public class MRecyclerAdapter extends RecyclerView.Adapter<MItemViewHolder> impl
     }
 }
 
-class MItemViewHolder extends RecyclerView.ViewHolder{
+class MItemViewHolder extends RecyclerView.ViewHolder {
     protected TextView mContent;
     protected CheckBox mFinish;
     protected ConstraintLayout mlist_box;
+
     public MItemViewHolder(final View itemView) {
         super(itemView);
         mContent = (TextView) itemView.findViewById(R.id.item_content);
         mFinish = (CheckBox) itemView.findViewById(R.id.item_finish);
         mlist_box = (ConstraintLayout) itemView.findViewById(R.id.list_box);
     }
+}

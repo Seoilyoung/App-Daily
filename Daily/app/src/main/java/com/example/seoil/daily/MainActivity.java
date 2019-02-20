@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.seoil.daily.Adapter.DBHelper;
 import com.example.seoil.daily.Adapter.RItemTouchHelperCallback;
@@ -32,12 +33,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     ActivityMainBinding mainBinding;
     private RecylcerAdapter adapter;
     private ArrayList<ListItem> mItems = new ArrayList<>();
+    String str_date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-        mainBinding.txtDate.setText(new SimpleDateFormat("yyyy년 MM월 dd일 (E)").format(new Date()));
         mainBinding.swipeRefreshLayout.setOnRefreshListener(this);
         setRecyclerView();
         mainBinding.fab.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 AlertDialog.Builder at = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("일정 추가");
                 final EditText edit_insert = new EditText(MainActivity.this);
-                        at.setView(edit_insert)
+                at.setView(edit_insert)
                         .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -95,6 +95,30 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         while(cursor.moveToNext()){
             mItems.add(new ListItem(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2))));
         }
+        str_date = new SimpleDateFormat("yyyy년 MM월 dd일 (E)").format(new Date());
+        mainBinding.txtDate.setText(str_date);
+        Cursor cursor1 = db.rawQuery("select count(*), date from tb_core;", null);
+        cursor1.moveToNext();
+        if(Integer.parseInt(cursor1.getString(0))==0){
+            db.execSQL("insert into tb_core (date, etc) values ('" + str_date + "', 0)");
+            //Log.i("로그","날짜 추가");
+        }else if(!cursor1.getString(1).equals(str_date)){
+            db.execSQL("update tb_core set date='" + str_date + "'");
+            //Log.i("로그","날짜 업데이트" + cursor1.getString(0) + "/" + cursor1.getString(1) + "/" + str_date);
+
+            AlertDialog.Builder at2 = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("날짜 변경");
+            TextView txt_dateupdate = new TextView(MainActivity.this);
+            txt_dateupdate.setText("     날짜 변경으로 인한 목록 추가");
+            at2.setView(txt_dateupdate)
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .show();
+        }
 
         db.close();
         adapter.notifyDataSetChanged();
@@ -102,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh(){
-        mainBinding.txtDate.setText(new SimpleDateFormat("yyyy년 MM월 dd일 (E)").format(new Date()));
         setData();
         adapter.notifyDataSetChanged();
         mainBinding.swipeRefreshLayout.setRefreshing(false);

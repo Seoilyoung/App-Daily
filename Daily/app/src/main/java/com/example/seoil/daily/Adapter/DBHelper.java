@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper{
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION =4;
     public DBHelper(Context context) {
         super(context, "dailyDB.db", null, DATABASE_VERSION);
     }
@@ -13,13 +13,16 @@ public class DBHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String dailySQL = "create table tb_daily" + "(_id integer primary key autoincrement," + "content," + "finish integer)";
+        String dailyCoreSQL = "create table tb_core" + "(date, etc)";
         sqLiteDatabase.execSQL(dailySQL);
+        sqLiteDatabase.execSQL(dailyCoreSQL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         if(i1 == DATABASE_VERSION){
             sqLiteDatabase.execSQL("drop table tb_daily");
+            sqLiteDatabase.execSQL("drop table tb_core");
             onCreate(sqLiteDatabase);
         }
     }
